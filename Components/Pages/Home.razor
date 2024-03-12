@@ -1,0 +1,51 @@
+﻿@page "/"
+@using UserDashBoardMicroservice.Consumer
+@using Microsoft.AspNetCore.Components
+@using System.Threading.Tasks;
+@attribute [StreamRendering]
+
+@inject UserDashboardConsumer UserDashboardConsumer
+
+<PageTitle>User Dashboard</PageTitle>
+
+<h1>Hello, Welcome to User Dashboard!</h1>
+
+@if (UserData != null)
+{
+    <div>
+        <h2>Welcome, @UserData.Name!</h2>
+        <p>Email: @UserData.Email</p>
+        <p>Contact: @UserData.Contact</p>
+        <p>Role: @UserData.Role</p>
+        <p>Role Description: @UserData.RoleDescription</p>
+        <!-- Add image display here -->
+    </div>
+}
+else
+{
+    <p>Loading user data...</p>
+}
+
+@code {
+    private UserData UserData;
+
+    // protected override void OnInitialized()
+    // {
+    //   UserDashboardConsumer.UserDataReceived += UpdateUserData;
+    //  UserDashboardConsumer.StartListening();
+    //  }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserData = await UserDashboardConsumer.StartListeningAsync();
+    }
+
+
+    public async ValueTask DisposeAsync()
+    {
+        //UserDashboardConsumer.UserDataReceived -= UpdateUserData;
+        await UserDashboardConsumer.DisposeAsync();
+    }
+}
+
